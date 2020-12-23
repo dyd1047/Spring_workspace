@@ -7,9 +7,8 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.Controller;
 
 import com.model2.board.model.BoardDAO;
-import com.model2.domain.Board;
 
-public class DetailController implements Controller{
+public class DeleteController implements Controller{
 	private BoardDAO boardDAO;
 	public void setBoardDAO(BoardDAO boardDAO) {
 		this.boardDAO = boardDAO;
@@ -17,13 +16,17 @@ public class DetailController implements Controller{
 
 	public ModelAndView handleRequest(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		//3단계: 일시키기
-		String board_id = request.getParameter("board_id");
-		Board board = boardDAO.select(Integer.parseInt(board_id));
+		int board_id = Integer.parseInt(request.getParameter("board_id"));
+		int result = boardDAO.delete(board_id);
 		
-		//4단계: 저장하기
-		ModelAndView mav = new ModelAndView("board/detail");
-		mav.addObject("board", board);
-				
+		//4단계: 저장
+		ModelAndView mav = new ModelAndView();
+		if(result == 1) {
+			mav.setViewName("redirect:/board/list"); //성공한 경우 url
+		}else {
+			mav.addObject("msg", "삭제실패");
+			mav.setViewName("error/result"); //실패한 경우 url
+		}
 		return mav;
 	}
 

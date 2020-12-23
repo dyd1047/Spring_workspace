@@ -9,7 +9,7 @@ import org.springframework.web.servlet.mvc.Controller;
 import com.model2.board.model.BoardDAO;
 import com.model2.domain.Board;
 
-public class RegistController implements Controller{
+public class EditController implements Controller{
 	private BoardDAO boardDAO;
 	public void setBoardDAO(BoardDAO boardDAO) {
 		this.boardDAO = boardDAO;
@@ -20,17 +20,26 @@ public class RegistController implements Controller{
 		String title = request.getParameter("title");
 		String writer = request.getParameter("writer");
 		String content = request.getParameter("content");
+		int board_id = Integer.parseInt(request.getParameter("board_id"));
 		
 		Board board = new Board();
 		board.setTitle(title);
 		board.setWriter(writer);
 		board.setContent(content);
+		board.setBoard_id(board_id);
 		
-		boardDAO.insert(board);
+		int result = boardDAO.update(board);
 		
-		//저장한 것이 없으므로, forward가 아니라 요청 끊고, 새로 접속을 유도해야 함! redirect()
 		ModelAndView mav = new ModelAndView();
-		mav.setViewName("redirect:/board/list");
+		if (result == 0) {
+			mav.addObject("msg", "수정실패");
+			mav.setViewName("error/result");
+		} else {
+			//컨트롤러를 한 번 거쳐서 갈 경우..
+			mav.setViewName("redirect:/board/detail?board_id="+board.getBoard_id());
+			//서버의 jsp로 포워드를 원하는 경우
+//			mav.setViewName("board/detail");
+		}
 		
 		return mav;
 	}

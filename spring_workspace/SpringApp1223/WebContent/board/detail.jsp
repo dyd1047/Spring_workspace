@@ -57,15 +57,30 @@ $(function(){
 	$($("input[type='button']")[0]).click(function(){ //수정버튼
 		edit(); //동기방식으로 요청
 	});
+	$($("input[type='button']")[1]).click(function(){ //수정버튼
+		del(); //동기방식으로 요청
+	});
 	getCommentList(); //댓글 목록 비동기로 가져오기!!!
 });
+//글삭제 요청
+function del(){
+	if(confirm("삭제하시겠어요?")){
+		$("form").attr({
+			action:"/board/delete",
+			method:"post"
+		});		
+		$("form").submit();
+	}
+}
 //글등록 요청
 function edit(){
-	$("form").attr({
-		action:"/board/edit",
-		method:"post"
-	});		
-	$("form").submit();
+	if(confirm("수정하시겠어요?")){
+		$("form").attr({
+			action:"/board/edit",
+			method:"post"
+		});		
+		$("form").submit();
+	}
 }
 //댓글 목록 가져오기 
 function getCommentList(){
